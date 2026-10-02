@@ -53,7 +53,13 @@ export default function ScheduleIntelligence() {
     const fetchTimeline = async () => {
         try {
             setLoading(true);
-            const res = await api.get("/schedule/timeline");
+            const res = await api.get("/schedule/timeline", {
+                params: {
+                    userId: user?.id,
+                    role,
+                    _t: Date.now()
+                }
+            });
             setTimelineData(res.data?.data || { timeline: [], ai_conflicts: {} });
         } catch (err) {
             console.error("Failed to load schedule timeline", err);
@@ -63,8 +69,9 @@ export default function ScheduleIntelligence() {
     };
 
     useEffect(() => {
+        if (!user) return;
         fetchTimeline();
-    }, []);
+    }, [user?.id, role]);
 
     const handleAddTask = async (e) => {
         e.preventDefault();

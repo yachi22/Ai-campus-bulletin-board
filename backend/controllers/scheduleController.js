@@ -39,7 +39,13 @@ async function addScheduleItem(req, res, next) {
 
 async function getTimeline(req, res, next) {
     try {
-        const result = await scheduleService.getFullTimelineAndConflicts(req.user.userId, req.user.role);
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+
+        const userId = req.user.userId;
+        const role = (req.query.role || req.user.role || "student").toLowerCase();
+        const result = await scheduleService.getFullTimelineAndConflicts(userId, role);
         return res.status(200).json({
             success: true,
             message: "Schedule timeline and conflict analysis retrieved.",

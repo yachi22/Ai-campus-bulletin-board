@@ -12,7 +12,7 @@ async function addScheduleItem(userId, data) {
 }
 
 async function getFullTimelineAndConflicts(userId, role = "student") {
-    const isFaculty = role === "faculty";
+    const isFaculty = (role || "").toLowerCase() === "faculty";
 
     // 1. Personal schedule items
     const personalItems = await scheduleModel.getUserScheduleItems(userId);
@@ -37,7 +37,7 @@ async function getFullTimelineAndConflicts(userId, role = "student") {
     if (isFaculty) {
         // Faculty: Academic notices, exams, grade submission, senate announcements
         bulletins = bulletins.filter(b => {
-            const cat = (b.category || "").toLowerCase();
+            const cat = (b.category || b.category_name || "").toLowerCase();
             const title = (b.title || "").toLowerCase();
             if (cat === "lost & found") return false;
             if (title.includes("internship recruitment") || title.includes("placement drive")) return false;
