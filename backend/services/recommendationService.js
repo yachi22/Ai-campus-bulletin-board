@@ -6,7 +6,7 @@ const userModel = require("../models/userModel");
 // PERSONALIZED BULLETIN RECOMMENDATIONS
 // =====================================================
 
-async function getRecommendations(userId) {
+async function getRecommendations(userId, queryParams = {}) {
 
     const user =
         await userModel.findUserById(userId);
@@ -20,23 +20,56 @@ async function getRecommendations(userId) {
             status: "published"
         });
 
-    let interests = [];
+    // Department & Year: loaded from user, with optional query overrides
+    const departmentId = (queryParams && queryParams.department !== undefined && queryParams.department !== "")
+        ? Number(queryParams.department)
+        : user.department_id;
 
-    if (user.interests) {
+    const userYear = (queryParams && queryParams.year !== undefined && queryParams.year !== "")
+        ? Number(queryParams.year)
+        : user.year;
+
+    // Load and parse interests
+    let rawInterests = (queryParams && queryParams.interests !== undefined && queryParams.interests !== "")
+        ? queryParams.interests
+        : user.interests;
+
+    let interests = [];
+    if (rawInterests) {
         try {
-            interests =
-                Array.isArray(user.interests)
-                    ? user.interests
-                    : JSON.parse(user.interests);
+            interests = Array.isArray(rawInterests)
+                ? rawInterests
+                : typeof rawInterests === "string" && rawInterests.startsWith("[")
+                ? JSON.parse(rawInterests)
+                : String(rawInterests).split(",").map(s => s.trim());
         } catch (error) {
-            interests = [];
+            interests = String(rawInterests).split(",").map(s => s.trim());
         }
     }
-
     interests = interests.map(
-        interest =>
-            String(interest).toLowerCase()
-    );
+        interest => String(interest).toLowerCase().trim()
+    ).filter(Boolean);
+
+    // Load and parse skills
+    let rawSkills = (queryParams && queryParams.skills !== undefined && queryParams.skills !== "")
+        ? queryParams.skills
+        : user.skills;
+
+    let skills = [];
+    if (rawSkills) {
+        try {
+            skills = Array.isArray(rawSkills)
+                ? rawSkills
+                : typeof rawSkills === "string" && rawSkills.startsWith("[")
+                ? JSON.parse(rawSkills)
+                : String(rawSkills).split(",").map(s => s.trim());
+        } catch (error) {
+            skills = String(rawSkills).split(",").map(s => s.trim());
+        }
+    }
+    skills = skills.map(
+        skill => String(skill).toLowerCase().trim()
+    ).filter(Boolean);
 
 
     const recommendations =
@@ -52,9 +85,8 @@ async function getRecommendations(userId) {
 
             // Department match
             if (
-                user.department_id &&
-                bulletin.department_id ===
-                    user.department_id
+                departmentId &&
+                bulletin.department_id === departmentId
             ) {
                 score += 40;
 
@@ -65,19 +97,19 @@ async function getRecommendations(userId) {
 
 
             // Year relevance
-            if (user.year) {
+            if (userYear) {
 
                 const suffix =
-                    user.year === 1
+                    userYear === 1
                         ? "st"
-                        : user.year === 2
+                        : userYear === 2
                         ? "nd"
-                        : user.year === 3
+                        : userYear === 3
                         ? "rd"
                         : "th";
 
                 const yearPattern =
-                    `${user.year}${suffix} year`;
+                    `${userYear}${suffix} year`;
 
                 if (
                     bulletinText.includes(

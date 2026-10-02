@@ -1,19 +1,33 @@
 import { useEffect, useState } from "react";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 
 export default function Recommendations() {
+    const { user } = useAuth();
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get("/ai/recommendations")
+        if (!user) return;
+        setLoading(true);
+
+        const params = {
+            userId: user.id,
+            department: user.department_id,
+            year: user.year,
+            interests: Array.isArray(user.interests) ? user.interests.join(",") : user.interests || "",
+            skills: Array.isArray(user.skills) ? user.skills.join(",") : user.skills || "",
+            _t: Date.now()
+        };
+
+        api.get("/ai/recommendations", { params })
             .then((r) => setItems(r.data?.data?.recommendations || r.data?.data || []))
             .catch(() => setItems([]))
             .finally(() => setLoading(false));
-    }, []);
+    }, [user?.id]);
 
     return (
         <div className="page-content">
