@@ -1,6 +1,6 @@
-﻿# AI Campus Bulletin Board
+# AI Campus Bulletin Board
 
-An intelligent campus bulletin board designed to provide students with relevant announcements, schedules, recommendations, and campus information.
+An intelligent campus bulletin board that provides students with relevant announcements, schedules, recommendations, and campus information.
 
 ## Features
 
@@ -17,24 +17,13 @@ An intelligent campus bulletin board designed to provide students with relevant 
 
 ## Technology Stack
 
-### Frontend
-- React
-- Vite
-- JavaScript
-
-### Backend
-- Node.js
-- Express.js
-- REST APIs
-
-### Database
+- React + Vite
+- Node.js + Express.js
 - MySQL
-
-### Authentication
-- JWT
+- JWT Authentication
 
 ## Project Structure
 
-- rontend/ - React frontend application
+- rontend/ - React frontend
 - ackend/ - Node.js/Express backend
 - database/ - Database schema and seed files
