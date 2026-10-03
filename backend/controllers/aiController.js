@@ -187,11 +187,15 @@ async function getRecommendations(
     next
 ) {
     try {
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
 
         const recommendations =
             await recommendationService
                 .getRecommendations(
-                    req.user.userId
+                    req.user.userId,
+                    req.query
                 );
 
         return res.status(200).json({
