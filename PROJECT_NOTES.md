@@ -2,16 +2,16 @@
 
 ## AI Campus Bulletin Board
 
-This document contains development notes and useful information for the project.
+Development notes for the AI Campus Bulletin Board project.
 
-### Main Components
+### Technology Stack
 
-- Frontend: React
-- Backend: Node.js and Express
-- Database: MySQL
-- Authentication: JWT
-- AI features: Personalized recommendations
+- React
+- Node.js
+- Express.js
+- MySQL
+- JWT Authentication
 
-### Development
+### Purpose
 
-The project is developed as a full-stack campus information and recommendation platform.
+A campus platform for announcements, schedules, personalized recommendations, and student information.
