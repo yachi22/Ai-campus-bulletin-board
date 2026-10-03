@@ -46,12 +46,20 @@ export default function Dashboard() {
                     api.get("/bulletins?status=published").catch(() => ({ data: { data: [] } })),
                     api.get("/events?status=published").catch(() => ({ data: { data: [] } })),
                     api.get("/notifications/unread-count").catch(() => ({ data: { data: { unread_count: 0 } } })),
-                    api.get("/schedule/timeline").catch(() => ({ data: { data: { timeline: [], ai_conflicts: {} } } })),
+                    api.get("/schedule/timeline", { params: { userId: user?.id, role, _t: Date.now() } }).catch(() => ({ data: { data: { timeline: [], ai_conflicts: {} } } })),
                     api.get("/notifications").catch(() => ({ data: { data: { notifications: [] } } }))
                 ];
 
                 if (role === "student") {
-                    requests.push(api.get("/ai/recommendations").catch(() => ({ data: { data: [] } })));
+                    const recParams = {
+                        userId: user?.id,
+                        department: user?.department_id,
+                        year: user?.year,
+                        interests: Array.isArray(user?.interests) ? user.interests.join(",") : user?.interests || "",
+                        skills: Array.isArray(user?.skills) ? user.skills.join(",") : user?.skills || "",
+                        _t: Date.now()
+                    };
+                    requests.push(api.get("/ai/recommendations", { params: recParams }).catch(() => ({ data: { data: [] } })));
                     requests.push(api.get("/opportunities").catch(() => ({ data: { data: { opportunities: [] } } })));
                 }
 
@@ -89,7 +97,7 @@ export default function Dashboard() {
             }
         };
         load();
-    }, [role]);
+    }, [user?.id, role]);
 
     const publishedBulletins = bulletins.filter((x) => x.status === "published");
     const upcomingEvents = events
