@@ -44,6 +44,7 @@ export function AuthProvider({ children }) {
 
     const logout = () => {
         localStorage.removeItem("token");
+        try { sessionStorage.clear(); } catch { /* ignore */ }
         setUser(null);
     };
 
