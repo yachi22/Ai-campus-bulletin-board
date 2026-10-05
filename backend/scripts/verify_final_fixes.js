@@ -87,9 +87,9 @@ async function runTests() {
             path: "/api/auth/verify-reset-email",
             method: "POST",
             headers: { "Content-Type": "application/json" }
-        }, { email: "student@test.com" });
+        }, { email: "student50@test.com" });
         assert("Verify email returns 200", verifyRes.statusCode === 200);
-        assert("Verify email returns user name 'Alex Student'", verifyRes.data?.data?.name === "Alex Student");
+        assert("Verify email returns user name 'Urvi Chitale'", verifyRes.data?.data?.name === "Urvi Chitale");
 
         // 4b. Reset Password to Student@New123
         const resetRes = await request({
@@ -99,7 +99,7 @@ async function runTests() {
             method: "POST",
             headers: { "Content-Type": "application/json" }
         }, {
-            email: "student@test.com",
+            email: "student50@test.com",
             newPassword: "Student@New123",
             confirmPassword: "Student@New123"
         });
@@ -112,7 +112,7 @@ async function runTests() {
             path: "/api/auth/login",
             method: "POST",
             headers: { "Content-Type": "application/json" }
-        }, { email: "student@test.com", password: "Student@123" });
+        }, { email: "student50@test.com", password: "Student@123" });
         assert("Old password fails with 401", oldLoginRes.statusCode === 401);
 
         // 4d. Verify NEW password succeeds (200)
@@ -122,7 +122,7 @@ async function runTests() {
             path: "/api/auth/login",
             method: "POST",
             headers: { "Content-Type": "application/json" }
-        }, { email: "student@test.com", password: "Student@New123" });
+        }, { email: "student50@test.com", password: "Student@New123" });
         assert("New password succeeds with 200", newLoginRes.statusCode === 200);
 
         // 4e. Reset back to Student@123 for repeatability
@@ -133,7 +133,7 @@ async function runTests() {
             method: "POST",
             headers: { "Content-Type": "application/json" }
         }, {
-            email: "student@test.com",
+            email: "student50@test.com",
             newPassword: "Student@123",
             confirmPassword: "Student@123"
         });
@@ -143,7 +143,7 @@ async function runTests() {
             path: "/api/auth/login",
             method: "POST",
             headers: { "Content-Type": "application/json" }
-        }, { email: "student@test.com", password: "Student@123" });
+        }, { email: "student50@test.com", password: "Student@123" });
         assert("Reset back to original password succeeds", resetBackRes.statusCode === 200);
 
         // 5. Role Authorization Checks
