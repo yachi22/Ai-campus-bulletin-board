@@ -6,6 +6,8 @@
  * and maintains the 3 primary demo accounts (student, faculty, admin).
  */
 
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const { pool } = require("../config/db");
 const bcrypt = require("bcrypt");
 
